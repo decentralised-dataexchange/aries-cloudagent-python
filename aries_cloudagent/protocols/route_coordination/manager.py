@@ -7,6 +7,7 @@ import logging
 from ...config.injection_context import InjectionContext
 from ...core.error import BaseError
 from ...messaging.responder import BaseResponder
+from ...wallet.base import BaseWallet
 
 from .messages.mediation_request import MediationRequest
 from .messages.mediation_grant import MediationGrant
@@ -179,6 +180,8 @@ class RouteCoordinationManager:
             grant_response: Response message for grant
 
         """
+        wallet: BaseWallet = await self.context.inject(BaseWallet)
+
         async def get_routing_endpoint():
             return self.context.settings.get("default_endpoint")
 
@@ -191,10 +194,15 @@ class RouteCoordinationManager:
         route_coordination.routing_endpoint = routing_endpoint
         route_coordination.state = RouteCoordination.STATE_MEDIATION_GRANTED
 
+        # Create and store new routing key
+        routing_key = await wallet.create_signing_key()
+
+        route_coordination.routing_keys = [routing_key.verkey, ]
+
         await route_coordination.save(self.context)
         grant_response = await self.create_grant_message(
             endpoint=routing_endpoint,
-            routing_keys=[]
+            routing_keys=route_coordination.routing_keys
         )
         grant_response._thread = {
             "thid": route_coordination.thread_id
@@ -405,8 +413,8 @@ class RouteCoordinationManager:
         )
 
         responder: BaseResponder = await self._context.inject(
-                BaseResponder, required=False
-            )
+            BaseResponder, required=False
+        )
         if responder:
             await responder.send(response, connection_id=connection_id)
 
