@@ -70,7 +70,7 @@ ARG indy_build_flags=--release
 
 ARG indy_sdk_url=https://codeload.github.com/hyperledger/indy-sdk/tar.gz/f85afd2f94959eb59522e5dda160d2c7fdd1a4ba
 
-ARG rust_version=1.48.0
+ARG rust_version=1.47.0
 
 ENV LIBRARY_PATH="$HOME/.local/lib:$LIBRARY_PATH"
 
@@ -216,5 +216,7 @@ ADD setup.py ./
 RUN pip3 install --no-cache-dir -e .
 
 RUN mkdir logs && chown -R indy:indy logs && chmod -R ug+rw logs
+
+USER root
 
 CMD ["bash"]
