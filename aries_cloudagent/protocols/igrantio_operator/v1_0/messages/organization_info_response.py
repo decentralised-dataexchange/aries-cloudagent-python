@@ -22,6 +22,7 @@ class OrganizationInfoResponseMessage(AgentMessage):
     def __init__(
         self,
         *,
+        org_id:str = None,
         name: str = None,
         cover_image_url: str = None,
         logo_image_url: str = None,
@@ -37,6 +38,7 @@ class OrganizationInfoResponseMessage(AgentMessage):
         Initialize organization info response message object.
         """
         super().__init__(**kwargs)
+        self.org_id = org_id
         self.name = name
         self.cover_image_url = cover_image_url
         self.logo_image_url = logo_image_url
@@ -56,7 +58,8 @@ class OrganizationInfoResponseMessageSchema(AgentMessageSchema):
 
         model_class = OrganizationInfoResponseMessage
         unknown = EXCLUDE
-
+    
+    org_id = fields.Str()
     name = fields.Str()
     cover_image_url = fields.Str()
     logo_image_url = fields.Str()

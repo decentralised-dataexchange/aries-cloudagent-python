@@ -7,6 +7,8 @@ from ...didcomm_prefix import DIDCommPrefix
 LIST_DATA_CERTIFICATE_TYPES = "igrantio-operator/1.0/list-data-certificate-types"
 LIST_DATA_CERTIFICATE_TYPES_RESPONSE = "igrantio-operator/1.0/list-data-certificate-types-response"
 
+PROBLEM_REPORT = "igrantio-operator/1.0/problem_report"
+
 ORGANIZATION_INFO = "igrantio-operator/1.0/organization-info"
 ORGANIZATION_INFO_RESPONSE = "igrantio-operator/1.0/organization-info-response"
 
@@ -25,6 +27,9 @@ MESSAGE_TYPES = DIDCommPrefix.qualify_all(
         ),
         ORGANIZATION_INFO_RESPONSE: (
             f"{PROTOCOL_PACKAGE}.messages.organization_info_response.OrganizationInfoResponseMessage"
+        ),
+        PROBLEM_REPORT: (
+            f"{PROTOCOL_PACKAGE}.messages.problem_report.ProblemReport"
         ),
     }
 )

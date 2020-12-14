@@ -128,10 +128,7 @@ class IGrantIOOperatorManager:
         if responder:
             await responder.send(request, connection_id=connection_id)
 
-    async def list_data_certificate_types_response(self):
-
-        connection_id = self.context.connection_record.connection_id
-
+    async def get_list_data_certificate_types_response_message(self):
         storage = await self.context.inject(BaseStorage)
         found = await storage.search_records(
             type_filter=CRED_DEF_SENT_RECORD_TYPE,
@@ -156,11 +153,7 @@ class IGrantIOOperatorManager:
         response = ListDataCertificateTypesResponseMessage(
             data_certificate_types=data_certificate_types)
 
-        responder: BaseResponder = await self._context.inject(
-            BaseResponder, required=False
-        )
-        if responder:
-            await responder.send(response, connection_id=connection_id)
+        return response
 
     async def send_organization_info_request(self, connection_id: str):
 
@@ -172,8 +165,7 @@ class IGrantIOOperatorManager:
         if responder:
             await responder.send(request, connection_id=connection_id)
 
-    async def send_organization_info_response(self):
-        connection_id = self.context.connection_record.connection_id
+    async def get_organization_info_message(self):
 
         igrantio_operator_mgr = IGrantIOOperatorManager(context=self.context)
         operator_configuration = await igrantio_operator_mgr.fetch_operator_configuration()
@@ -200,7 +192,6 @@ class IGrantIOOperatorManager:
                                 "HlcSupport",
                                 "DataRetention",
                                 "Enabled",
-                                "ID",
                                 "Subs"
                             ]
 
@@ -208,6 +199,7 @@ class IGrantIOOperatorManager:
                                 organization_details.pop(exclude_key, None)
 
                             response = OrganizationInfoResponseMessage(
+                                org_id=organization_details["ID"],
                                 name=organization_details["Name"],
                                 cover_image_url=organization_details["CoverImageURL"] + "/web",
                                 logo_image_url=organization_details["LogoImageURL"] + "/web",
@@ -224,8 +216,7 @@ class IGrantIOOperatorManager:
                                 )
                             )
 
-                            responder: BaseResponder = await self._context.inject(
-                                BaseResponder, required=False
-                            )
-                            if responder:
-                                await responder.send(response, connection_id=connection_id)
+                            return response
+                    else:
+                        return None
+        return None

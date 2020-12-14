@@ -5,7 +5,7 @@ from .....messaging.base_handler import (
     BaseResponder,
     RequestContext,
 )
-
+from ..messages.problem_report import ProblemReport, ProblemReportReason
 from ..messages.list_data_certificate_types import ListDataCertificateTypesMessage
 from ..manager import IGrantIOOperatorManager
 
@@ -31,4 +31,6 @@ class ListDataCertificateTypesHandler(BaseHandler):
         )
 
         igrantio_operator_mgr = IGrantIOOperatorManager(context=context)
-        await igrantio_operator_mgr.list_data_certificate_types_response()
+        reply = await igrantio_operator_mgr.get_list_data_certificate_types_response_message()
+
+        await responder.send_reply(reply)
